@@ -63,6 +63,30 @@ DESCRIPTION
     course, you could also set parameter through an instance script via the
     PARAMS key.
 
+    Here's an example that I've used:
+
+     sub cgiapp_init {
+         my $self = shift;
+ 
+         # Set some defaults for DFV unless they already exist.  
+         $self->param('dfv_defaults') ||
+             $self->param('dfv_defaults', {
+                     missing_optional_valid => 1,
+                     filters => 'trim',
+                     msgs => {
+                         any_errors => 'err__',
+                         prefix     => 'err_',
+                         invalid    => 'Invalid',
+                         missing    => 'Missing',
+                         format => '<span class="dfv-errors">%s</span>',
+                     },
+                 });
+     }
+
+    Now all my applications that inherit from a super class with this
+    "cgiapp_init()" routine and have these defaults, so I don't have to add
+    them to every profile.
+
   validate_rm
     Works like "check_rm" above, but returns the old style $valid hash
     reference instead of the results object.

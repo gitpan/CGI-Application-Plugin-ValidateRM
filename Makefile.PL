@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile
   (
    NAME        => 'CGI::Application::Plugin::ValidateRM',
-   VERSION     => '1.20',
+   VERSION     => '1.22',
    PL_FILES    => {},
    INSTALLDIRS => 'site',
    PREREQ_PM   => {

@@ -1,6 +1,13 @@
 Revision history for Perl extension CGI::Application::Plugin::ValidateRM.
 
-1.20 XXX
+1.22 Sun Nov 28 22:24:03 EST 2004
+    (No code changes)
+   - Update SIGNATURE to use key that hopefully works. 
+
+1.21 Mon Sep  6 09:01:30 EST 2004
+   - Added example of using dfv_defaults
+
+1.20 ??
    - renamed from ::ValidateRM to ::Plugin::ValidateRM
    - changed export policy to not export by default. 
 

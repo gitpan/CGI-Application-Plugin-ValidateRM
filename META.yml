@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: CGI-Application-Plugin-ValidateRM
-version: 1.20
+version: 1.22
 license: perl
 distribution_type: module
 requires:
@@ -13,5 +13,5 @@ conflicts: {}
 provides:
   CGI::Application::Plugin::ValidateRM:
     file: lib/CGI/Application/Plugin/ValidateRM.pm
-    version: 1.20
+    version: 1.22
 generated_by: Module::Build version 0.21

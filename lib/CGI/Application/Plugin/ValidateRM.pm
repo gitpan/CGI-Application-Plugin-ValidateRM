@@ -15,7 +15,7 @@ require Exporter;
 	validate_rm	
 );
 
-$VERSION = '1.20';
+$VERSION = '1.22';
 
 sub check_rm {
      my $self = shift;
@@ -145,6 +145,30 @@ By setting this to a hash reference of defaults in your C<cgiapp_init> routine
 in your own super-class, you could make it easy to share some default settings for
 Data::FormValidator across several forms. Of course, you could also set parameter
 through an instance script via the PARAMS key.
+
+Here's an example that I've used:
+
+ sub cgiapp_init {
+     my $self = shift;
+ 
+     # Set some defaults for DFV unless they already exist.  
+     $self->param('dfv_defaults') ||
+         $self->param('dfv_defaults', {
+                 missing_optional_valid => 1,
+                 filters => 'trim',
+                 msgs => {
+                     any_errors => 'err__',
+                     prefix     => 'err_',
+                     invalid    => 'Invalid',
+                     missing    => 'Missing',
+                     format => '<span class="dfv-errors">%s</span>',
+                 },
+             });
+ }
+
+Now all my applications that inherit from a super class with this
+C<cgiapp_init()> routine and have these defaults, so I don't have
+to add them to every profile. 
 
 =head2 validate_rm 
 
