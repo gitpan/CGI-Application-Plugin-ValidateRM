@@ -1,0 +1,34 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.38.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It would check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 25779a419d3e874dbbd528d2c52aa92381070cec Build.PL
+SHA1 0278924aa88b387a1fe527043a9d71b94ac0f92a Changes
+SHA1 5b0d7a0916113ded222d0dea5795e5e3c313196c MANIFEST
+SHA1 8135d0b22267b7547a9b97f8f8a89eb30e59f7ab META.yml
+SHA1 68e36c3f5f1033b4cc27636af32c4991528659a6 Makefile.PL
+SHA1 a565574d6feb517b92862c1a05830d8abe37556a README
+SHA1 2f5e09e1dfc989e75c385086b4badf722e36c065 lib/CGI/Application/Plugin/ValidateRM.pm
+SHA1 f57a546ad8faa18cc3f044ed19272f1c2c1a2c18 t/01_basic.t
+SHA1 5172eb9dc7299ebf8a53e664e96db6389ed929ff t/01_display.html
+SHA1 a1ed6753b9799b39b9f34db60ae72daeae7853c0 t/99_pod.t
+SHA1 bf3cd07cdfd5d9ebc884afd388838e49cd1c0706 t/TestApp1.pm
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (FreeBSD)
+
+iD8DBQFBMd1MsKQdKVrv3XwRAj8AAJ96DWq+ggmq4bvUl2RiGgiUXHEJPQCcCYgW
+trLcaIr5MHc7wCAs2jg26UQ=
+=rtzO
+-----END PGP SIGNATURE-----
