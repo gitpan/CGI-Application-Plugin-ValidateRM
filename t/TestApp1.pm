@@ -48,7 +48,7 @@ sub form_display_with_ref {
 sub form_process {
 	my $self = shift;
 
-	use CGI::Application::Plugin::ValidateRM (qw/validate_rm check_rm/);
+	use CGI::Application::Plugin::ValidateRM (qw/validate_rm check_rm dfv/);
 	my ($results, $err_page) = $self->validate_rm('form_display', '_form_profile' );
 	return $err_page if $err_page; 
 

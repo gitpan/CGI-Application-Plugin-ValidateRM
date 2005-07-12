@@ -1,5 +1,8 @@
 Revision history for Perl extension CGI::Application::Plugin::ValidateRM.
 
+2.00_01
+    - Add dfv() accessor method, primarily of interest to other plugin authors. 
+
 1.22 Sun Nov 28 22:24:03 EST 2004
     (No code changes)
    - Update SIGNATURE to use key that hopefully works. 

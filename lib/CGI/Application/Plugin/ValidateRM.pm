@@ -10,12 +10,16 @@ require Exporter;
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
+@EXPORT = qw(
+    &dfv
+);
+
 @EXPORT_OK = qw(
 	check_rm
 	validate_rm	
 );
 
-$VERSION = '1.22';
+$VERSION = '2.00_01';
 
 sub check_rm {
      my $self = shift;
@@ -58,7 +62,14 @@ sub check_rm {
              %$fif_params,
 		 );
 	}
+    $self->{'__DFV_RESULT'} = $r;
 	return ($r,$err_page);
+}
+
+sub dfv {
+    my $self = shift;
+    die "must call check_rm() or validate_rm() first." unless defined $self->{'__DFV_RESULT'};
+    return $self->{'__DFV_RESULT'};
 }
 
 sub validate_rm {
@@ -93,7 +104,7 @@ CGI::Application::Plugin::ValidateRM - Help validate CGI::Application run modes 
 CGI::Application::Plugin::ValidateRM helps to validate web forms when using the
 CGI::Application framework and the Data::FormValidator module. 
 
-=head2 check_rm
+=head2 check_rm()
 
 This CGI::Application method takes three inputs and returns two outputs. Its
 return values are a L<Data::FormValidator::Results> object and, if any fields
@@ -109,7 +120,16 @@ This run mode will be used to generate an error page, with the form re-filled
 returned as a second output parameter.
 
 The errors will be passed in as a hash reference, which can then be handed to a
-templating system for display.  
+templating system for display. Following the above example, the form_display() routine might look like: 
+
+ sub form_display {
+    my $self = shift;
+    my $errs = shift;                             # <-- prepared for form reloading
+    my $t = $self->load_tmpl('form_display.html');
+    $t->param($errs) if $errs;                    # <-- Also necessary. 
+    # ...
+
+ }
 
 The fields should be prepared using Data::FormValidator's
 built-in support for returning error messages as a hash reference.   
@@ -170,10 +190,20 @@ Now all my applications that inherit from a super class with this
 C<cgiapp_init()> routine and have these defaults, so I don't have
 to add them to every profile. 
 
-=head2 validate_rm 
+=head2 dfv()
+
+ $self->dfv;
+
+After C<check_rm()> or C<validate_rm()> has been called, the DFV results object
+can also be accessed through this method. I expect this to be most useful to
+other plugin authors. Because of this expection, C<dfv()> is exported by
+default to keep things transparent to the user.
+
+=head2 validate_rm() 
 
 Works like C<check_rm> above, but returns the old style C<$valid> hash
-reference instead of the results object.
+reference instead of the results object. It's no longer recommended, but still
+supported.
 
 =head1 EXAMPLE
 
@@ -241,7 +271,7 @@ To join the mailing list, visit L<http://lists.sourceforge.net/lists/listinfo/ca
 
 =head1 LICENSE
 
-Copyright (C) 2003 Mark Stosberg <mark@summersault.com>
+Copyright (C) 2003-2005 Mark Stosberg <mark@summersault.com>
 
 This module is free software; you can redistribute it and/or modify it
 under the terms of either:

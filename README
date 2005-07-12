@@ -16,7 +16,7 @@ DESCRIPTION
     CGI::Application::Plugin::ValidateRM helps to validate web forms when
     using the CGI::Application framework and the Data::FormValidator module.
 
-  check_rm
+  check_rm()
     This CGI::Application method takes three inputs and returns two outputs.
     Its return values are a Data::FormValidator::Results object and, if any
     fields defined in the profile are missing or invalid, an error page. The
@@ -28,7 +28,17 @@ DESCRIPTION
         This page will be returned as a second output parameter.
 
         The errors will be passed in as a hash reference, which can then be
-        handed to a templating system for display.
+        handed to a templating system for display. Following the above
+        example, the form_display() routine might look like:
+
+         sub form_display {
+            my $self = shift;
+            my $errs = shift;                             # <-- prepared for form reloading
+            my $t = $self->load_tmpl('form_display.html');
+            $t->param($errs) if $errs;                    # <-- Also necessary. 
+            # ...
+
+         }
 
         The fields should be prepared using Data::FormValidator's built-in
         support for returning error messages as a hash reference. See the
@@ -87,9 +97,18 @@ DESCRIPTION
     "cgiapp_init()" routine and have these defaults, so I don't have to add
     them to every profile.
 
-  validate_rm
+  dfv()
+     $self->dfv;
+
+    After "check_rm()" or "validate_rm()" has been called, the DFV results
+    object can also be accessed through this method. I expect this to be
+    most useful to other plugin authors. Because of this expection, "dfv()"
+    is exported by default to keep things transparent to the user.
+
+  validate_rm()
     Works like "check_rm" above, but returns the old style $valid hash
-    reference instead of the results object.
+    reference instead of the results object. It's no longer recommended, but
+    still supported.
 
 EXAMPLE
     In a CGI::Application module:
@@ -152,7 +171,7 @@ MAILING LIST
     <http://lists.sourceforge.net/lists/listinfo/cascade-dataform>
 
 LICENSE
-    Copyright (C) 2003 Mark Stosberg <mark@summersault.com>
+    Copyright (C) 2003-2005 Mark Stosberg <mark@summersault.com>
 
     This module is free software; you can redistribute it and/or modify it
     under the terms of either:

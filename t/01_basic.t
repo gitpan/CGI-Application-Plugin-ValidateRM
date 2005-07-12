@@ -1,4 +1,4 @@
-use Test::More tests => 8;
+use Test::More tests => 10;
 BEGIN { use_ok('CGI::Application::Plugin::ValidateRM') };
 
 use lib './t';
@@ -30,3 +30,10 @@ my $t3_obj = TestApp1->new(QUERY=>CGI->new("email=broken;passwd=anything;rm=form
 my $t3_output = $t3_obj->run();
 
 unlike($t3_output, qr/anything/, 'passing options to HTML::FillInForm works');
+
+{
+    use UNIVERSAL (qw/can/);
+    ok( $t3_obj->can('dfv'), "has dfv method" );
+    ok( defined $t3_obj->dfv->invalid('email'), "content of DFV method is as expected" );
+
+}
