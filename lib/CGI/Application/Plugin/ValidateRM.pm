@@ -11,15 +11,17 @@ require Exporter;
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
-    &dfv
+    &dfv_results
+    &dfv_error_page
+    &check_rm_error_page
+	&check_rm
+	&validate_rm	
 );
 
 @EXPORT_OK = qw(
-	check_rm
-	validate_rm	
 );
 
-$VERSION = '2.00_01';
+$VERSION = '2.00';
 
 sub check_rm {
      my $self = shift;
@@ -46,27 +48,24 @@ sub check_rm {
  
      require Data::FormValidator;
      my $dfv = Data::FormValidator->new({}, $self->param('dfv_defaults') );
+	 my $r =$dfv->check($self->query,$profile);
+     $self->{'__DFV_RESULT'} = $r;
 
-	my $r =$dfv->check($self->query,$profile);
+     # Pass the params through the object so the user 
+     # can just call dfv_error_page() later
+     $self->{'__DFV_RETURN_RM'}  = $return_rm;
+     $self->{'__DFV_FIF_PARAMS'} = $fif_params;
 
-	my $err_page;
-	if ($r->has_missing or $r->has_invalid) {
-		 my $return_page = $self->$return_rm($r->msgs);
-         my $return_pageref = (ref($return_page) eq 'SCALAR')
-             ? $return_page : \$return_page;
-		 require HTML::FillInForm;
-		 my $fif = new HTML::FillInForm;
-		 $err_page = $fif->fill(
-             scalarref => $return_pageref,
-			 fobject => $self->query,
-             %$fif_params,
-		 );
-	}
-    $self->{'__DFV_RESULT'} = $r;
-	return ($r,$err_page);
+     if (wantarray) {
+         # We have to call the function non-traditionally to achieve mix-in happiness. 
+         return $r, dfv_error_page($self);
+     }
+     else {
+         return $r;
+     }
 }
 
-sub dfv {
+sub dfv_results {
     my $self = shift;
     die "must call check_rm() or validate_rm() first." unless defined $self->{'__DFV_RESULT'};
     return $self->{'__DFV_RESULT'};
@@ -78,7 +77,29 @@ sub validate_rm {
 	return (scalar $r->valid,$err_page);
 }
 
-# Autoload methods go after =cut, and are processed by the autosplit program.
+sub dfv_error_page {
+    my $self = shift;
+    my $r          = $self->{'__DFV_RESULT'};
+    my $return_rm  = $self->{'__DFV_RETURN_RM'};
+    my $fif_params = $self->{'__DFV_FIF_PARAMS'};
+
+    my $err_page = undef;
+    if ($r->has_missing or $r->has_invalid) {
+        my $return_page = $self->$return_rm($r->msgs);
+        my $return_pageref = (ref($return_page) eq 'SCALAR')
+        ? $return_page : \$return_page;
+        require HTML::FillInForm;
+        my $fif = new HTML::FillInForm;
+        $err_page = $fif->fill(
+            scalarref => $return_pageref,
+            fobject => $self->query,
+            %$fif_params,
+        );
+    }
+    return $err_page;
+}
+
+*check_rm_error_page = \&dfv_error_page;
 
 1;
 __END__
@@ -89,15 +110,14 @@ CGI::Application::Plugin::ValidateRM - Help validate CGI::Application run modes 
 
 =head1 SYNOPSIS
 
- use CGI::Application::Plugin::ValidateRM (qw/check_rm/);
+ use CGI::Application::Plugin::ValidateRM; 
 
- my ($results,$err_page) = $self->check_rm('form_display','_form_profile');
-  return $err_page if $err_page; 
+ my  $results = $self->check_rm('form_display','_form_profile') || return $self->check_rm_error_page;
 
 
  # Optionally, you can pass additional options to HTML::FillInForm->fill()
- my ($results,$err_page) = $self->check_rm('form_display','_form_profile', { fill_password => 0 });
-  return $err_page if $err_page; 
+ my $results = $self->check_rm('form_display','_form_profile', { fill_password => 0 })
+        || return $self->check_rm_error_page;
 
 =head1 DESCRIPTION
 
@@ -106,9 +126,19 @@ CGI::Application framework and the Data::FormValidator module.
 
 =head2 check_rm()
 
-This CGI::Application method takes three inputs and returns two outputs. Its
-return values are a L<Data::FormValidator::Results> object and, if any fields
-defined in the profile are missing or invalid, an error page.
+Validates a form displayed in a run mode with a C<Data::FormValidator> profile, returning
+the results and possibly an a version of the form page with errors marked on the page. 
+
+In scalar context, it returns simply the Data::FormValidator::Results object
+which conveniently evaluates to false in a boolean context if there were any missing
+or invalide fields. This is the recommended calling convention.
+
+In list context, it returns the results object followed by the error page, if any. 
+This was the previous recommended syntax, and was used like this:
+
+ my ($results,$err_page) = $self->check_rm('form_display','_form_profile');
+ return $err_page if $err_page;
+
 The inputs are as follows:
 
 =over
@@ -116,7 +146,7 @@ The inputs are as follows:
 =item Return run mode
 
 This run mode will be used to generate an error page, with the form re-filled
-(using HTML::FillInForm) and error messages in the form. This page will be
+(using L<HTML::FillInForm>) and error messages in the form. This page will be
 returned as a second output parameter.
 
 The errors will be passed in as a hash reference, which can then be handed to a
@@ -190,14 +220,19 @@ Now all my applications that inherit from a super class with this
 C<cgiapp_init()> routine and have these defaults, so I don't have
 to add them to every profile. 
 
-=head2 dfv()
+=head2 check_rm_error_page()
 
- $self->dfv;
+After check_rm() is called this accessor method can be used to retrieve the
+error page described in the check_rm() docs above. The method has an alias
+named C<dfv_error_page()> if you find that more intuitive. 
+
+=head2 dfv_results()
+
+ $self->dfv_results;
 
 After C<check_rm()> or C<validate_rm()> has been called, the DFV results object
 can also be accessed through this method. I expect this to be most useful to
-other plugin authors. Because of this expection, C<dfv()> is exported by
-default to keep things transparent to the user.
+other plugin authors. 
 
 =head2 validate_rm() 
 

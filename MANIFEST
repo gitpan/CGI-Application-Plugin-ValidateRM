@@ -1,6 +1,7 @@
 Build.PL
 Changes
-MANIFEST
+MANIFEST			This list of files
+MANIFEST.SKIP
 META.yml
 Makefile.PL
 README

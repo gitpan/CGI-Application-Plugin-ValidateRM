@@ -6,7 +6,7 @@ WriteMakefile
           'VERSION_FROM' => 'lib/CGI/Application/Plugin/ValidateRM.pm',
           'PREREQ_PM' => {
                            'CGI::Application' => '3',
-                           'Data::FormValidator' => '3',
+                           'Data::FormValidator' => '3.7',
                            'HTML::FillInForm' => '0'
                          },
           'INSTALLDIRS' => 'site',

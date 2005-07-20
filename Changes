@@ -1,7 +1,17 @@
 Revision history for Perl extension CGI::Application::Plugin::ValidateRM.
 
-2.00_01
-    - Add dfv() accessor method, primarily of interest to other plugin authors. 
+2.00 Tue Jul 19 22:01:35 EST 2005
+
+    - Added new syntax for calling check_rm() in scalar context, returning just
+      the $result object.
+
+    - Added accessor method for the error page, named check_rm_error_page() and aliased
+      as dfv_error_page().
+
+    - Added dfv_results() accessor method, primarily of interest to other plug-in authors. 
+
+    - Switched back to exporting by default, but you can still explicitly
+      import if you want to. 
 
 1.22 Sun Nov 28 22:24:03 EST 2004
     (No code changes)

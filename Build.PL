@@ -16,7 +16,7 @@ $class->new(
 	license => 'perl',
 	requires => {
 		'CGI::Application'    => 3.0,
-		'Data::FormValidator' => 3.00,
+		'Data::FormValidator' => 3.70, # for boolean overloading. 
 		'HTML::FillInForm'	  => 0,	 
 	},
     create_makefile_pl => 'traditional',

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: CGI-Application-Plugin-ValidateRM
-version: 2.00_01
+version: 2.00
 author:
   - Mark Stosberg <mark@summersault.com>
 abstract: |-
@@ -8,10 +8,10 @@ abstract: |-
 license: perl
 requires:
   CGI::Application: 3
-  Data::FormValidator: 3
+  Data::FormValidator: 3.7
   HTML::FillInForm: 0
 provides:
   CGI::Application::Plugin::ValidateRM:
     file: lib/CGI/Application/Plugin/ValidateRM.pm
-    version: 2.00_01
+    version: 2.00
 generated_by: Module::Build version 0.2611

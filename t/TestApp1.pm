@@ -48,7 +48,8 @@ sub form_display_with_ref {
 sub form_process {
 	my $self = shift;
 
-	use CGI::Application::Plugin::ValidateRM (qw/validate_rm check_rm dfv/);
+	use CGI::Application::Plugin::ValidateRM;
+
 	my ($results, $err_page) = $self->validate_rm('form_display', '_form_profile' );
 	return $err_page if $err_page; 
 
@@ -67,8 +68,8 @@ sub form_process_with_ref {
 sub form_process_with_fif_opts {
     my $self = shift;
 
-    my ($results, $err_page) = $self->check_rm('form_display', '_form_profile', { fill_password => 0 }  );
-    return $err_page if $err_page;
+    my $results = $self->check_rm('form_display', '_form_profile', { fill_password => 0 }  ) 
+        || return $self->dfv_error_page;
 
     return 'success';
 }

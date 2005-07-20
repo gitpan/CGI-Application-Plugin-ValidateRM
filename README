@@ -3,24 +3,36 @@ NAME
     run modes using Data::FormValidator
 
 SYNOPSIS
-     use CGI::Application::Plugin::ValidateRM (qw/check_rm/);
+     use CGI::Application::Plugin::ValidateRM; 
 
-     my ($results,$err_page) = $self->check_rm('form_display','_form_profile');
-      return $err_page if $err_page; 
+     my  $results = $self->check_rm('form_display','_form_profile') || return $self->check_rm_error_page;
 
      # Optionally, you can pass additional options to HTML::FillInForm->fill()
-     my ($results,$err_page) = $self->check_rm('form_display','_form_profile', { fill_password => 0 });
-      return $err_page if $err_page; 
+     my $results = $self->check_rm('form_display','_form_profile', { fill_password => 0 })
+            || return $self->check_rm_error_page;
 
 DESCRIPTION
     CGI::Application::Plugin::ValidateRM helps to validate web forms when
     using the CGI::Application framework and the Data::FormValidator module.
 
   check_rm()
-    This CGI::Application method takes three inputs and returns two outputs.
-    Its return values are a Data::FormValidator::Results object and, if any
-    fields defined in the profile are missing or invalid, an error page. The
-    inputs are as follows:
+    Validates a form displayed in a run mode with a "Data::FormValidator"
+    profile, returning the results and possibly an a version of the form
+    page with errors marked on the page.
+
+    In scalar context, it returns simply the Data::FormValidator::Results
+    object which conveniently evaluates to false in a boolean context if
+    there were any missing or invalide fields. This is the recommended
+    calling convention.
+
+    In list context, it returns the results object followed by the error
+    page, if any. This was the previous recommended syntax, and was used
+    like this:
+
+     my ($results,$err_page) = $self->check_rm('form_display','_form_profile');
+     return $err_page if $err_page;
+
+    The inputs are as follows:
 
     Return run mode
         This run mode will be used to generate an error page, with the form
@@ -97,13 +109,17 @@ DESCRIPTION
     "cgiapp_init()" routine and have these defaults, so I don't have to add
     them to every profile.
 
-  dfv()
-     $self->dfv;
+  check_rm_error_page()
+    After check_rm() is called this accessor method can be used to retrieve
+    the error page described in the check_rm() docs above. The method has an
+    alias named "dfv_error_page()" if you find that more intuitive.
+
+  dfv_results()
+     $self->dfv_results;
 
     After "check_rm()" or "validate_rm()" has been called, the DFV results
     object can also be accessed through this method. I expect this to be
-    most useful to other plugin authors. Because of this expection, "dfv()"
-    is exported by default to keep things transparent to the user.
+    most useful to other plugin authors.
 
   validate_rm()
     Works like "check_rm" above, but returns the old style $valid hash
