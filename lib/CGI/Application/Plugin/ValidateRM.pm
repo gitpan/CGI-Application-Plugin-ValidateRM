@@ -21,7 +21,7 @@ require Exporter;
 @EXPORT_OK = qw(
 );
 
-$VERSION = '2.00';
+$VERSION = '2.1';
 
 sub check_rm {
      my $self = shift;
@@ -85,9 +85,16 @@ sub dfv_error_page {
 
     my $err_page = undef;
     if ($r->has_missing or $r->has_invalid) {
+        # If ::Forward has been loaded, act like forward()
+        my $before_rm = $self->{__CURRENT_RUNMODE};
+        $self->{__CURRENT_RUNMODE} = $return_rm if ($INC{'CGI/Application/Plugin/Forward.pm'});
+
         my $return_page = $self->$return_rm($r->msgs);
+
+        $self->{__CURRENT_RUNMODE} =  $before_rm;
+
         my $return_pageref = (ref($return_page) eq 'SCALAR')
-        ? $return_page : \$return_page;
+            ? $return_page : \$return_page;
         require HTML::FillInForm;
         my $fif = new HTML::FillInForm;
         $err_page = $fif->fill(
@@ -100,6 +107,7 @@ sub dfv_error_page {
 }
 
 *check_rm_error_page = \&dfv_error_page;
+my $avoid_warning = \&check_rm_error_page;
 
 1;
 __END__
@@ -219,6 +227,20 @@ Here's an example that I've used:
 Now all my applications that inherit from a super class with this
 C<cgiapp_init()> routine and have these defaults, so I don't have
 to add them to every profile. 
+
+=head2 CGI::Application::Plugin::Forward support
+
+Experimental support has been added for CGI::Application::Plugin::Forward,
+which keeps the current run mode up to date. This would be useful if you 
+were automatically generating a template name based on the run mode name, 
+and you wanted this to work with the form run mode used with ::ValidateRM.
+
+If we detect that ::Forward is loaded, we will set the current run mode name to
+be accurate while the error page is being generated, and then set it back to
+the previous value afterwards. There is a caveat: This currently only works
+when the run name name is the same as the subroutine name for the form page.
+If they differ, the current run mode name inside of the form page will be
+inaccurate. If this is a problem for you, get in touch to discuss a solution. 
 
 =head2 check_rm_error_page()
 

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: CGI-Application-Plugin-ValidateRM
-version: 2.00
+version: 2.1
 author:
   - Mark Stosberg <mark@summersault.com>
 abstract: |-
@@ -13,5 +13,5 @@ requires:
 provides:
   CGI::Application::Plugin::ValidateRM:
     file: lib/CGI/Application/Plugin/ValidateRM.pm
-    version: 2.00
+    version: 2.1
 generated_by: Module::Build version 0.2611

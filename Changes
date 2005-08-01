@@ -1,5 +1,9 @@
 Revision history for Perl extension CGI::Application::Plugin::ValidateRM.
 
+2.1 Sun Jul 31 21:17:23 EST 2005
+
+    - Added experimental support for ::Forward;
+
 2.00 Tue Jul 19 22:01:35 EST 2005
 
     - Added new syntax for calling check_rm() in scalar context, returning just
