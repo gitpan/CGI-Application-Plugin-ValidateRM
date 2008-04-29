@@ -17,9 +17,9 @@ $class->new(
 	requires => {
 		'CGI::Application'    => 3.0,
 		'Data::FormValidator' => 3.70, # for boolean overloading. 
-		'HTML::FillInForm'	  => 0,	 
+		'HTML::FillInForm'	  => 1.07, # Fixes test-suite failure
 	},
     create_makefile_pl => 'traditional',
-	sign=>1,
+	sign=>0,
 )->create_build_script;
 

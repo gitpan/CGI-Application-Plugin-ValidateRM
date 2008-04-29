@@ -1,5 +1,9 @@
 Revision history for Perl extension CGI::Application::Plugin::ValidateRM.
 
+2.2 Tue Apr 29 10:44:57 EDT 2008
+    - Fix test failure by requiring at least HTML::FillInForm 1.07 (RT#35056)
+      No code changes. 
+
 2.1 Sun Jul 31 21:17:23 EST 2005
 
     - Added experimental support for ::Forward;

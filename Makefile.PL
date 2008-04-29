@@ -7,7 +7,7 @@ WriteMakefile
           'PREREQ_PM' => {
                            'CGI::Application' => '3',
                            'Data::FormValidator' => '3.7',
-                           'HTML::FillInForm' => '0'
+                           'HTML::FillInForm' => '1.07'
                          },
           'INSTALLDIRS' => 'site',
           'PL_FILES' => {}

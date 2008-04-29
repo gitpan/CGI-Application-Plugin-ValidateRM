@@ -21,7 +21,7 @@ require Exporter;
 @EXPORT_OK = qw(
 );
 
-$VERSION = '2.1';
+$VERSION = '2.2';
 
 sub check_rm {
      my $self = shift;
