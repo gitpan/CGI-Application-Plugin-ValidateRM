@@ -2,14 +2,15 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
+          'PL_FILES' => {},
+          'INSTALLDIRS' => 'site',
           'NAME' => 'CGI::Application::Plugin::ValidateRM',
+          'EXE_FILES' => [],
           'VERSION_FROM' => 'lib/CGI/Application/Plugin/ValidateRM.pm',
           'PREREQ_PM' => {
                            'CGI::Application' => '3',
-                           'Data::FormValidator' => '3.7',
-                           'HTML::FillInForm' => '1.07'
-                         },
-          'INSTALLDIRS' => 'site',
-          'PL_FILES' => {}
+                           'HTML::FillInForm' => '1.07',
+                           'Data::FormValidator' => '3.7'
+                         }
         )
 ;
