@@ -34,7 +34,6 @@ unlike($t3_output, qr/anything/, 'passing options to HTML::FillInForm works');
 
 
 {
-    use UNIVERSAL (qw/can/);
     ok( $t3_obj->can('dfv_results'), "has dfv_results method" );
     ok( $t3_obj->can('dfv_error_page'), "has dfv_error_page method" );
     ok( $t3_obj->can('check_rm_error_page'), "has check_rm_error_page method" );

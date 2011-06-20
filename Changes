@@ -1,5 +1,12 @@
 Revision history for Perl extension CGI::Application::Plugin::ValidateRM.
 
+2.4 July 20th, 2011
+    No functional changes.
+
+    Fixed Perl 5.12 compatibility, thanks to Nicholas Bamber.  (RT#67894)
+
+    Also, some other code-cleanup.
+
 2.3 Wed Oct 22 23:05:29 EDT 2008
     - Fix broken test in t/forward.t  (#35056)
     No code changes. 

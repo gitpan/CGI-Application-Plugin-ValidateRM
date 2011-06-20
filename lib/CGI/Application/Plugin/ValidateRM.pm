@@ -1,35 +1,26 @@
 package CGI::Application::Plugin::ValidateRM;
+use base ('Exporter','AutoLoader');
 use HTML::FillInForm;
 use Data::FormValidator;
 use strict;
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 
-require Exporter;
-
-@ISA = qw(Exporter AutoLoader);
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-@EXPORT = qw(
+our @EXPORT = qw(
     &dfv_results
     &dfv_error_page
     &check_rm_error_page
 	&check_rm
-	&validate_rm	
+	&validate_rm
 );
 
-@EXPORT_OK = qw(
-);
-
-$VERSION = '2.3';
+our $VERSION = '2.4';
 
 sub check_rm {
      my $self = shift;
 	 my $return_rm = shift || die 'missing required return run mode';
      my $profile_in = shift || die 'missing required profile';
-     my $fif_params = shift || {}; 
+     my $fif_params = shift || {};
 
-	# If the profile is not a hash reference, 
+	# If the profile is not a hash reference,
 	# assume it's a CGI::App method
 	my $profile;
 	if (ref $profile_in eq 'HASH') {
@@ -45,19 +36,19 @@ sub check_rm {
         }
 
 	}
- 
+
      require Data::FormValidator;
      my $dfv = Data::FormValidator->new({}, $self->param('dfv_defaults') );
 	 my $r =$dfv->check($self->query,$profile);
      $self->{'__DFV_RESULT'} = $r;
 
-     # Pass the params through the object so the user 
+     # Pass the params through the object so the user
      # can just call dfv_error_page() later
      $self->{'__DFV_RETURN_RM'}  = $return_rm;
      $self->{'__DFV_FIF_PARAMS'} = $fif_params;
 
      if (wantarray) {
-         # We have to call the function non-traditionally to achieve mix-in happiness. 
+         # We have to call the function non-traditionally to achieve mix-in happiness.
          return $r, dfv_error_page($self);
      }
      else {
@@ -118,7 +109,7 @@ CGI::Application::Plugin::ValidateRM - Help validate CGI::Application run modes 
 
 =head1 SYNOPSIS
 
- use CGI::Application::Plugin::ValidateRM; 
+ use CGI::Application::Plugin::ValidateRM;
 
  my  $results = $self->check_rm('form_display','_form_profile') || return $self->check_rm_error_page;
 
@@ -130,18 +121,18 @@ CGI::Application::Plugin::ValidateRM - Help validate CGI::Application run modes 
 =head1 DESCRIPTION
 
 CGI::Application::Plugin::ValidateRM helps to validate web forms when using the
-CGI::Application framework and the Data::FormValidator module. 
+CGI::Application framework and the Data::FormValidator module.
 
 =head2 check_rm()
 
 Validates a form displayed in a run mode with a C<Data::FormValidator> profile, returning
-the results and possibly an a version of the form page with errors marked on the page. 
+the results and possibly an a version of the form page with errors marked on the page.
 
 In scalar context, it returns simply the Data::FormValidator::Results object
 which conveniently evaluates to false in a boolean context if there were any missing
 or invalide fields. This is the recommended calling convention.
 
-In list context, it returns the results object followed by the error page, if any. 
+In list context, it returns the results object followed by the error page, if any.
 This was the previous recommended syntax, and was used like this:
 
  my ($results,$err_page) = $self->check_rm('form_display','_form_profile');
@@ -158,25 +149,25 @@ This run mode will be used to generate an error page, with the form re-filled
 returned as a second output parameter.
 
 The errors will be passed in as a hash reference, which can then be handed to a
-templating system for display. Following the above example, the form_display() routine might look like: 
+templating system for display. Following the above example, the form_display() routine might look like:
 
  sub form_display {
     my $self = shift;
     my $errs = shift;                             # <-- prepared for form reloading
     my $t = $self->load_tmpl('form_display.html');
-    $t->param($errs) if $errs;                    # <-- Also necessary. 
+    $t->param($errs) if $errs;                    # <-- Also necessary.
     # ...
 
  }
 
 The fields should be prepared using Data::FormValidator's
-built-in support for returning error messages as a hash reference.   
+built-in support for returning error messages as a hash reference.
 See the documentation for C<msgs> in the L<Data::FormValidator::Results>
 documentation.
 
 Returning the errors with a prefix, such as "err_" is recommended. Using
 C<any_errors> is also recommended to make it easy to display a general "we have
-some errors" message.  
+some errors" message.
 
 HTML::Template users may want to pass C<die_on_bad_params=E<gt>0> to the
 HTML::Template constructor to prevent the presence of the "err_" tokens from
@@ -190,7 +181,7 @@ of a CGI::Application method that will return such a hash reference.
 =item HTML::FillInForm options (optional)
 
 If desired, you can pass additional options to the HTML::FillInForm C<fill>
-method through a hash reference. See an example above. 
+method through a hash reference. See an example above.
 
 =back
 
@@ -208,8 +199,8 @@ Here's an example that I've used:
 
  sub cgiapp_init {
      my $self = shift;
- 
-     # Set some defaults for DFV unless they already exist.  
+
+     # Set some defaults for DFV unless they already exist.
      $self->param('dfv_defaults') ||
          $self->param('dfv_defaults', {
                  missing_optional_valid => 1,
@@ -226,13 +217,13 @@ Here's an example that I've used:
 
 Now all my applications that inherit from a super class with this
 C<cgiapp_init()> routine and have these defaults, so I don't have
-to add them to every profile. 
+to add them to every profile.
 
 =head2 CGI::Application::Plugin::Forward support
 
 Experimental support has been added for CGI::Application::Plugin::Forward,
-which keeps the current run mode up to date. This would be useful if you 
-were automatically generating a template name based on the run mode name, 
+which keeps the current run mode up to date. This would be useful if you
+were automatically generating a template name based on the run mode name,
 and you wanted this to work with the form run mode used with ::ValidateRM.
 
 If we detect that ::Forward is loaded, we will set the current run mode name to
@@ -240,13 +231,13 @@ be accurate while the error page is being generated, and then set it back to
 the previous value afterwards. There is a caveat: This currently only works
 when the run name name is the same as the subroutine name for the form page.
 If they differ, the current run mode name inside of the form page will be
-inaccurate. If this is a problem for you, get in touch to discuss a solution. 
+inaccurate. If this is a problem for you, get in touch to discuss a solution.
 
 =head2 check_rm_error_page()
 
 After check_rm() is called this accessor method can be used to retrieve the
 error page described in the check_rm() docs above. The method has an alias
-named C<dfv_error_page()> if you find that more intuitive. 
+named C<dfv_error_page()> if you find that more intuitive.
 
 =head2 dfv_results()
 
@@ -254,9 +245,9 @@ named C<dfv_error_page()> if you find that more intuitive.
 
 After C<check_rm()> or C<validate_rm()> has been called, the DFV results object
 can also be accessed through this method. I expect this to be most useful to
-other plugin authors. 
+other plugin authors.
 
-=head2 validate_rm() 
+=head2 validate_rm()
 
 Works like C<check_rm> above, but returns the old style C<$valid> hash
 reference instead of the results object. It's no longer recommended, but still
@@ -271,32 +262,32 @@ In a CGI::Application module:
  sub form_display {
  	my $self = shift;
  	my $errs = shift;
- 
+
  	my $t = $self->load_tmpl('page.html');
- 
+
  	$t->param($errs) if $errs;
  	return $t->output;
  }
- 
+
  sub form_process {
  	my $self = shift;
- 
+
  	use CGI::Application::Plugin::ValidateRM (qw/check_rm/);
  	my ($results, $err_page) = $self->check_rm('form_display','_form_profile');
- 	return $err_page if $err_page; 
+ 	return $err_page if $err_page;
 
 	#..  do something with DFV $results object now
- 
+
  	my $t = $self->load_tmpl('success.html');
  	return $t->output;
 
  }
- 
+
  sub _form_profile {
  	return {
  		required => 'email',
 		msgs => {
-			any_errors => 'some_errors', 
+			any_errors => 'some_errors',
 			prefix => 'err_',
 		},
  	};
@@ -323,7 +314,7 @@ Mark Stosberg <mark@summersault.com>
 =head1 MAILING LIST
 
 If you have any questions, comments, bug reports or feature suggestions,
-post them to the support mailing list! This the Data::FormValidator list. 
+post them to the support mailing list! This the Data::FormValidator list.
 To join the mailing list, visit L<http://lists.sourceforge.net/lists/listinfo/cascade-dataform>
 
 =head1 LICENSE
@@ -338,7 +329,7 @@ Foundation; either version 1, or (at your option) any later version,
 
 or
 
-b) the "Artistic License" 
+b) the "Artistic License"
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
