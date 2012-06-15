@@ -73,42 +73,67 @@ DESCRIPTION
 
     HTML::FillInForm options (optional)
         If desired, you can pass additional options to the HTML::FillInForm
-        "fill" method through a hash reference. See an example above.
+        fill() method through a hash reference. See an example above.
 
-    Additionally, the value of the 'dfv_defaults' param from the calling
-    object is optionally used to pass defaults to the "new()" constructor.
+   Additional Options
+    To control things even more, you can set parameters in your
+    CGI::Application object itself.
 
-      $self->param('dfv_defaults')
+    dfv_defaults
+        The value of the 'dfv_defaults' param is optionally used to pass
+        defaults to the Data::FormValidator new() constructor.
 
-    By setting this to a hash reference of defaults in your "cgiapp_init"
-    routine in your own super-class, you could make it easy to share some
-    default settings for Data::FormValidator across several forms. Of
-    course, you could also set parameter through an instance script via the
-    PARAMS key.
+          $self->param(dfv_defaults => { filters => ['trim'] })
 
-    Here's an example that I've used:
+        By setting this to a hash reference of defaults in your
+        "cgiapp_init" routine in your own super-class, you could make it
+        easy to share some default settings for Data::FormValidator across
+        several forms. Of course, you could also set parameter through an
+        instance script via the PARAMS key.
 
-     sub cgiapp_init {
-         my $self = shift;
+        Here's an example that I've used:
 
-         # Set some defaults for DFV unless they already exist.
-         $self->param('dfv_defaults') ||
-             $self->param('dfv_defaults', {
-                     missing_optional_valid => 1,
-                     filters => 'trim',
-                     msgs => {
-                         any_errors => 'err__',
-                         prefix     => 'err_',
-                         invalid    => 'Invalid',
-                         missing    => 'Missing',
-                         format => '<span class="dfv-errors">%s</span>',
-                     },
-                 });
-     }
+         sub cgiapp_init {
+             my $self = shift;
 
-    Now all my applications that inherit from a super class with this
-    "cgiapp_init()" routine and have these defaults, so I don't have to add
-    them to every profile.
+             # Set some defaults for DFV unless they already exist.
+             $self->param('dfv_defaults') ||
+                 $self->param('dfv_defaults', {
+                         missing_optional_valid => 1,
+                         filters => 'trim',
+                         msgs => {
+                             any_errors => 'err__',
+                             prefix     => 'err_',
+                             invalid    => 'Invalid',
+                             missing    => 'Missing',
+                             format => '<span class="dfv-errors">%s</span>',
+                         },
+                     });
+         }
+
+        Now all my applications that inherit from a super class with this
+        "cgiapp_init()" routine and have these defaults, so I don't have to
+        add them to every profile.
+
+    dfv_fif_class
+        By default this plugin uses HTML::FillInForm to fill in the forms on
+        the error pages with the given values. This option let's you change
+        that so it uses an HTML::FillInForm compatible class (like a
+        subclass) to do the same work.
+
+            $self->param(dfv_fif_class => 'HTML::FillInForm::SuperDuper');
+
+    dfv_fif_defaults
+        The value of the 'dfv_fif_defaults' param is optionally used to pass
+        defaults to the HTML::FillInForm "fill()" method.
+
+            $self->param(dfv_fif_defaults => {ignore_fields => ['rm']})
+
+        By setting this to a hash reference of defaults in your
+        "cgiapp_init" routine in your own super-class, you could make it
+        easy to share some default settings for HTML::FillInForm across
+        several forms. Of course, you could also set parameter through an
+        instance script via the PARAMS key.
 
   CGI::Application::Plugin::Forward support
     Experimental support has been added for

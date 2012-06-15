@@ -1,5 +1,12 @@
 Revision history for Perl extension CGI::Application::Plugin::ValidateRM.
 
+2.5 June 10th, 2012
+    New features, thanks to Michael Peters (RT#46258):
+    - Support for using an alternative HTML::FillInForm class
+      via param dfv_fif_class.
+    - Support for supplying defaults for HTML::FillInForm->fill
+      via param dfv_fif_defaults.
+
 2.4 July 20th, 2011
     No functional changes.
 
